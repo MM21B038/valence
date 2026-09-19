@@ -1,6 +1,7 @@
 from django.db import models
+import uuid
 from protocol.enums import TransportProtocolChoices
-from agent.models import ServerConfig
+from agent.models import MCPServerConfig, ThreadConfig, InternalTool
 
 
 class SkillTag(models.Model):
@@ -13,7 +14,7 @@ class SkillExample(models.Model):
     text = models.TextField(max_length=500)
     
 class AgentSkillModel(models.Model):
-    skill_id = models.CharField(max_length=100, primary_key=True)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
     tags = models.ManyToManyField(SkillTag, blank=True, related_name='tags')
@@ -23,10 +24,12 @@ class AgentSkillModel(models.Model):
         return self.name
 
 class AgentInterfaceModel(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     url = models.URLField(blank=True, null=True)
     protocol_binding = models.CharField(max_length=100, choices=TransportProtocolChoices, default=TransportProtocolChoices.JSONRPC)
 
 class AgentCardModel(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
     version = models.CharField(max_length=20, blank=True, null=True)
@@ -39,10 +42,13 @@ class AgentCardModel(models.Model):
         return self.name
 
 class AgentModel(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
-    ip = models.CharField(max_length=20)
+    host = models.CharField(max_length=20)
     port = models.IntegerField()
-    servers = models.ManyToManyField(ServerConfig, blank=True, related_name='servers')
+    servers = models.ManyToManyField(MCPServerConfig, blank=True, related_name='servers')
+    thread_config = models.ForeignKey(ThreadConfig, on_delete=models.DO_NOTHING)
+    excluded_internal_tools = models.ManyToManyField(InternalTool, blank = True)
     system = models.TextField(blank=True)
     agent_card = models.ForeignKey(AgentCardModel, on_delete=models.DO_NOTHING)
     

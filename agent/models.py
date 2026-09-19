@@ -7,7 +7,7 @@ from agent.enums import (
 )
 
 class LLMConfig(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     provider = models.CharField(max_length=100, choices=LLMProvider.choices, default=LLMProvider.OPENAI_COMPATIBLE)
     model = models.CharField(max_length=100)
     base_url = models.URLField(blank=True, null=True)
@@ -16,7 +16,14 @@ class LLMConfig(models.Model):
     def __str__(self):
         return self.name
 
-class ServerConfig(models.Model):
+class InternalTool(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(max_length=500)
+
+
+class MCPServerConfig(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
     transport = models.CharField(max_length=10, choices=ServerTransport.choices, default=ServerTransport.HTTP)
     url = models.URLField(blank=True, null=True)
@@ -26,6 +33,20 @@ class ServerConfig(models.Model):
 
     def __str__(self):
         return self.name
+
+class ToolHideRuleModel(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100)
+    message = models.TextField(max_length=500)
+    server = models.ForeignKey(MCPServerConfig, on_delete=models.CASCADE)
+
+class ThreadConfig(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    tool_hide_rules = models.ManyToManyField(ToolHideRuleModel, blank = True)
+    auto_hide_rule = models.BooleanField(default = False)
+    token_limit = models.IntegerField(blank = True, null = True)
+    per_tool_token_limit = models.IntegerField(blank = True, null = True)
+
 
 class Skill(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

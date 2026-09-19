@@ -1,5 +1,6 @@
 import asyncio
 import threading
+import json
 from langchain_core.messages import ToolMessage
 from typing import List, Iterator, Any, Optional, cast
 from agent.services.thread import Thread
@@ -61,7 +62,13 @@ class Agent:
                         result = await self.tool_map[name].ainvoke(args)
                     except Exception as e:
                         result = f"Error: {e}"
-                    thread.append(ToolMessage(name=name, content=str(result), tool_call_id=call_id))
+                    
+                    if isinstance(result, dict):
+                        result = json.dumps(result, indent=2, ensure_ascii=False)
+                    if not isinstance(result, str):
+                        result = str(result)
+                   
+                    thread.append(ToolMessage(name=name, content=result, tool_call_id=call_id))
             else:
                 thread.agent = None
                 return response

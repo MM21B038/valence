@@ -23,17 +23,57 @@ class MCPClient:
 
     def append(self, server: Server):
         if server.name in self.names:
-            raise DuplicateValueError(f"server with name {server.name} already there")
-        self.servers.append(server)
-        self.names.append(server.name)
+            return DuplicateValueError(error=f"server with name {server.name} already there")
+        self.server.append(server)
         return True
 
-    async def get_tools(self):
+    def _ensure_connected(self):
         if self.client is None:
             self.connect()
 
-        if isinstance(self.client, MultiServerMCPClient):
-            return await self.client.get_tools()
+    async def get_tools(self):
+        self._ensure_connected()
 
-        else:
-            raise Exception("client is not a MultiServerMCPClient")
+        return await self.client.get_tools()
+
+    async def list_prompts(self, server_name: str):
+        self._ensure_connected()
+
+        async with self.client.session(server_name) as session:
+            result = await session.list_prompts()
+
+        return result
+
+    async def list_resources(self, server_name: str):
+        self._ensure_connected()
+
+        async with self.client.session(server_name) as session:
+            result = await session.list_resources()
+
+        return result
+
+    async def get_prompt(
+        self,
+        server_name: str,
+        prompt_name: str,
+        arguments: Optional[Dict[str, Any]] = None
+    ):
+        self._ensure_connected()
+
+        return await self.client.get_prompt(
+            server_name=server_name,
+            prompt_name=prompt_name,
+            arguments=arguments
+        )
+
+    async def get_resources(
+        self,
+        server_name: Optional[str] = None,
+        uris: Optional[Union[str, List[str]]] = None
+    ):
+        self._ensure_connected()
+
+        return await self.client.get_resources(
+            server_name=server_name,
+            uris=uris
+        )

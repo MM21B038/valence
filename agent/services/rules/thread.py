@@ -1,19 +1,10 @@
 from typing import Optional
+from pydantic import BaseModel
 
-class ThreadHideRule:
-    def __init__(
-        self,
-        name: str,
-        message: str,
-    ):
-        self.name = name
-        self.message = message
+class ThreadHideRule(BaseModel):
+    name: str
+    message: str
 
-class AutoToolHideRule:
-    def __init__(
-        self,
-        token_limit: int,
-        per_tool_token_limit: Optional[int] = None
-    ):
-        self.token_limit = token_limit
-        self.per_tool_token_limit = per_tool_token_limit
+class AutoToolHideRule(BaseModel):
+    token_limit: int
+    per_tool_token_limit: Optional[int] = None

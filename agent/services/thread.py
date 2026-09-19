@@ -204,11 +204,6 @@ class Thread:
         else:
             self.append(other)
 
-    # def __add__(self, other: Thread):
-    #     new_thread = Thread()
-    #     new_thread.messages = self.messages + other.messages
-    #     return new_thread
-
     def __str__(self):
         counts = self.count()
         return json.dumps(counts)
