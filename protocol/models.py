@@ -40,6 +40,8 @@ class AgentCardModel(models.Model):
 
 class AgentModel(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    ip = models.CharField(max_length=20)
+    port = models.IntegerField()
     servers = models.ManyToManyField(ServerConfig, blank=True, related_name='servers')
     system = models.TextField(blank=True)
     agent_card = models.ForeignKey(AgentCardModel, on_delete=models.DO_NOTHING)
