@@ -1,3 +1,3 @@
-from .thread import ThreadHideRule, AutoToolHideRule
+from .thread import ToolHideRule, AutoToolHideRule
 
-__all__ = ["ThreadHideRule", "AutoToolHideRule"]
+__all__ = ["ToolHideRule", "AutoToolHideRule"]

@@ -1,12 +1,16 @@
+from os import name
 from typing import Any, Dict, List, Optional
+
+from click import command
 from agent.enums import ServerTransport
+from agent.models import MCPServerConfig
 
 class Server:
     
     def __init__(
         self,
         name: str,
-        transport: ServerTransport = ServerTransport.HTTP,
+        transport: ServerTransport,
         url: Optional[str] = None,
         command: Optional[str] = None,
         args: Optional[List[str]] = None,
@@ -19,6 +23,17 @@ class Server:
         self.command = command
         self.args = args
         self.env = env
+
+    @classmethod
+    def from_config(cls, config: MCPServerConfig):
+        return cls(
+            name=config.name,
+            transport=ServerTransport(config.transport),
+            url=config.url,
+            command=config.command,
+            args=config.args,
+            env=config.env
+        )
 
     def dump_json(self):
         config = {}

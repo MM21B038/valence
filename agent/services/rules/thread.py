@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel
 
-class ThreadHideRule(BaseModel):
+class ToolHideRule(BaseModel):
     name: str
     message: str
 

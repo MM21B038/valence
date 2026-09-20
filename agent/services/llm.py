@@ -3,6 +3,7 @@ from langchain_openai import ChatOpenAI
 from langchain_openrouter import ChatOpenRouter
 from pydantic import SecretStr
 from agent.enums import LLMProvider
+from agent.models import LLMConfig
 
 
 class LLM:
@@ -17,6 +18,15 @@ class LLM:
         self.model = model
         self.base_url = base_url
         self.api_key = api_key
+
+    @classmethod
+    def from_config(cls, config: LLMConfig):
+        return cls(
+            provider=LLMProvider(config.provider),
+            model=config.model,
+            base_url=config.base_url,
+            api_key=config.api_key,
+        )
 
     def connect(self):
         api_key = SecretStr(self.api_key) if self.api_key is not None else None

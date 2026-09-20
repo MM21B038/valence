@@ -8,6 +8,7 @@ dependencies = [
     "a2a-sdk[grpc]>=1.1.4",
     "django>=6.1.1",
     "django-encrypted-model-fields>=0.6.5",
+    "djangorestframework>=3.18.1",
     "fastapi>=0.141.1",
     "langchain>=1.4.1",
     "langchain-core>=1.6.3",
