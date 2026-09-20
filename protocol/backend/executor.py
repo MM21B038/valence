@@ -8,15 +8,29 @@ from a2a.types import (
     Part,
     TaskState,
 )
-from typing import cast
+from typing import List
 from langchain_core.messages import HumanMessage, SystemMessage
 from agent.backend import get_agent, get_thread, get_system_prompt
 from protocol.models import AgentExecutorModel
 
+async def _get_agent_cards_info(cards: List[AgentCard]):
+    agent_cards_info = """
+
+============
+AGENT CARDS
+============
+"""
+
+    for card in cards:
+        agent_cards_info += f"\n{card}\n---"
+
+    return agent_cards_info
+
 class Executor(AgentExecutor):
 
-    def __init__(self, agent_executor: AgentExecutorModel):
+    def __init__(self, agent_executor: AgentExecutorModel, cards: List[AgentCard]):
         self.agent_executor = agent_executor
+        self.cards = cards
     
     async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
 
@@ -56,6 +70,8 @@ class Executor(AgentExecutor):
             system_message = await get_system_prompt(
                 self.agent_executor.system_prompt
             )
+
+            system_message += await _get_agent_cards_info(self.cards)
             
             thread.append(SystemMessage(system_message))
             thread.append(HumanMessage(user_text))
@@ -78,11 +94,12 @@ class Executor(AgentExecutor):
     async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:
         pass
 
-async def get_request_handler(agent_executor: AgentExecutorModel, agent_card: AgentCard):
+async def get_request_handler(agent_executor: AgentExecutorModel, agent_card: AgentCard, cards: List[AgentCard]):
     
     return DefaultRequestHandler(
         Executor(
-            agent_executor
+            agent_executor,
+            cards
         ),
         InMemoryTaskStore(),
         agent_card
