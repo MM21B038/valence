@@ -3,18 +3,18 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from agent.models import LLMConfig
-from agent.serializers import LLMConfigSerializer, LLMConfigListSerializer
+from agent.models import MCPServerConfig
+from agent.serializers import MCPServerConfigSerializer, MCPServerConfigListSerializer
 
-class LLMConfigPagination(PageNumberPagination):
+class MCPServerConfigPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
 
-class LLMConfigView(GenericAPIView):
+class MCPServerConfigView(GenericAPIView):
 
-    queryset = LLMConfig.objects.all()
-    serializer_class = LLMConfigSerializer
+    queryset = MCPServerConfig.objects.all()
+    serializer_class = MCPServerConfigSerializer
 
     def get(self, request, uuid):
         config = get_object_or_404(
@@ -72,11 +72,11 @@ class LLMConfigView(GenericAPIView):
             status=status.HTTP_204_NO_CONTENT
         )
 
-class LLMConfigListView(GenericAPIView):
+class MCPServerConfigListView(GenericAPIView):
 
-    queryset = LLMConfig.objects.all()
-    serializer_class = LLMConfigListSerializer
-    pagination_class = LLMConfigPagination
+    queryset = MCPServerConfig.objects.all()
+    serializer_class = MCPServerConfigListSerializer
+    pagination_class = MCPServerConfigPagination
 
     def get(self, request):
 
@@ -102,7 +102,7 @@ class LLMConfigListView(GenericAPIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = LLMConfigSerializer(
+        serializer = MCPServerConfigSerializer(
             data=request.data
         )
 
@@ -113,6 +113,6 @@ class LLMConfigListView(GenericAPIView):
         config = serializer.save()
 
         return Response(
-            LLMConfigSerializer(config).data,
+            MCPServerConfigSerializer(config).data,
             status=status.HTTP_201_CREATED
         )
