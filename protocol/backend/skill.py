@@ -14,5 +14,5 @@ async def get_agent_skill(agent_skill: AgentSkillModel):
             output_modes=["text/plain"],
         )
     except Exception as e:
-        GetAgentSkillError(str(e))
+        raise GetAgentSkillError(str(e))
         

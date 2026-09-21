@@ -35,4 +35,4 @@ async def get_agent_card(agent_card: AgentCardModel):
             skills=skills,
         )
     except Exception as e:
-        return GetAgentCardError(str(e))
+        raise GetAgentCardError(str(e))
