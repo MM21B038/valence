@@ -7,5 +7,8 @@ class GetSystemPromptError(Exception):
 class GetMCPToolsError(Exception):
     pass
 
+class GetMCPPromptsError(Exception):
+    pass
+
 class GetThreadError(Exception):
     pass

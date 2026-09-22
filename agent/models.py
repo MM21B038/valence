@@ -45,21 +45,58 @@ class ToolHideRuleModel(models.Model):
     name = models.CharField(max_length=100)
     message = models.TextField(max_length=500)
     server = models.ForeignKey(MCPServerConfig, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
 
 class CompressionPrompt(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=20, blank=True, null=True)
-    prompt = models.TextField(max_length=1_000, blank = True, null = True)
+    name = models.CharField(max_length=50, unique=True)
+    prompt = models.TextField(max_length=3_000, blank = True, null = True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
 
 class Prompt(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=20, blank=True, null=True)
-    content = models.TextField(max_length=1_000)
+    name = models.CharField(max_length=50, unique=True)
+    content = models.TextField(max_length=3_000)
+    server = models.ForeignKey(
+        MCPServerConfig,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="prompts",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
 
 class SystemPrompt(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=20, blank=True, null=True)
-    content = models.TextField(max_length=1_000)
+    name = models.CharField(max_length=50, unique=True)
+    content = models.TextField(max_length=3_000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+class Skill(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
 
 class ThreadConfig(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -72,14 +109,3 @@ class ThreadConfig(models.Model):
     per_tool_token_limit = models.IntegerField(blank = True, null = True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-
-class Skill(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=100)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name

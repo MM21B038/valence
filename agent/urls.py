@@ -14,6 +14,36 @@ from agent.views.mcp_server_config import (
     MCPServerConfigListView
 )
 
+from agent.views.tool_hide_rule import (
+    ToolHideRuleView,
+    ToolHideRuleListView
+)
+
+from agent.views.compression_prompt import(
+    CompressionPromptView,
+    CompressionPromptListView
+)
+
+from agent.views.prompt import (
+    PromptView,
+    PromptListView
+)
+
+from agent.views.system_prompt import (
+    SystemPromptView,
+    SystemPromptListView
+)
+
+from agent.views.skill import (
+    SkillView,
+    SkillListView
+)
+
+from agent.views.thread_config import (
+    ThreadConfig,
+    ThreadConfigListView
+)
+
 urlpatterns = [
     path(
         "llm-config/<uuid:uuid>/",
@@ -44,4 +74,76 @@ urlpatterns = [
         MCPServerConfigListView.as_view(),
         name="mcp-server-config-list",
     ),
+
+    path(
+        "tool-hide-rule/<uuid:uuid>/",
+        ToolhideRuleView.as_view(),
+        name="tool-hide-rule",
+    ),
+
+    path(
+        "tool-hide-rule/",
+        ToolHideRuleListView.as_view(),
+        name="tool-hide-rule-list",
+    ),
+
+    path(
+        "compression-prompt/<uuid:uuid>/",
+        CompressionPromptView.as_view(),
+        name="compression-prompt",
+    ),
+
+    path(
+        "compression-prompt/",
+        CompressionPromptListView.as_view(),
+        name="compression-prompt-list",
+    ),
+
+    path(
+        "prompt/<uuid:uuid>/",
+        PromptView.as_view(),
+        name="prompt",
+    ),
+
+    path(
+        "prompt/",
+        PromptListView.as_view(),
+        name="prompt-list",
+    ),
+
+    path(
+        "system-prompt/<uuid:uuid>/",
+        SystemPromptView.as_view(),
+        name="system-prompt",
+    ),
+
+    path(
+        "system-prompt/",
+        SystemPromptListView.as_view(),
+        name="system-prompt-list",
+    ),
+
+    path(
+        "skill/<uuid:uuid>/",
+        SkillView.as_view(),
+        name="skill",
+    ),
+
+    path(
+        "skill/",
+        SkillListView.as_view(),
+        name="skill-list",
+    ),
+
+    path(
+        "thread-config/<uuid:uuid>",
+        ThreadConfig.as_view(),
+        name="thread-config",
+    ),
+
+    path(
+        "thread-config-list/",
+        ThreadConfigListView.as_view(),
+        name="thread-config-list",
+    )
 ]

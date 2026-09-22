@@ -1,10 +1,38 @@
+import asyncio
+import threading
+from asgiref.sync import sync_to_async
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from agent.models import MCPServerConfig
+from agent.models import MCPServerConfig, ToolHideRuleModel, Prompt
 from agent.serializers import MCPServerConfigSerializer, MCPServerConfigListSerializer
+from agent.backend import get_server_tools
+
+async def create_thread_hide_rule(server: MCPServerConfig):
+
+    tools = await get_server_tools(server)
+
+    for tool in tools:
+        name=tool.name
+        await sync_to_async(ToolHideRuleModel.objects.create)(
+            server=server,
+            name=name,
+            message=f"[{name} result has been collapsed. Please refer to the latest tool result.]"
+        )
+    
+async def add_prompts(server: MCPServerConfig):
+
+    prompts = await get_server_prompts(server)
+
+    for prompt in prompts:
+        name = prompt.name
+        await sync_to_async(Prompt.objects.create)(
+            server=server,
+            name=name,
+            content=prompt.content
+        )
 
 class MCPServerConfigPagination(PageNumberPagination):
     page_size = 10
@@ -111,6 +139,16 @@ class MCPServerConfigListView(GenericAPIView):
         )
 
         config = serializer.save()
+
+        threading.Thread(
+            target=lambda: asyncio.run(create_thread_hide_rule(config)),
+            daemon=True,
+        ).start()
+        
+        threading.Thread(
+            target=lambda: asyncio.run(add_prompts(config)),
+            daemon=True,
+        ).start()
 
         return Response(
             MCPServerConfigSerializer(config).data,

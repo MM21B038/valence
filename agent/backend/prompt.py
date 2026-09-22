@@ -3,7 +3,7 @@ from agent.models import SystemPrompt, Prompt, Skill
 from agent.errors import GetSystemPromptError
 
 skill_pattern = r"\[skill\]\(([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\)"
-prompt_pattern = r"\[skill\]\(([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\)"
+prompt_pattern = r"\[prompt\]\(([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\)"
 
 def _fetch_prompt(match):
     uuid = match.group(1)
