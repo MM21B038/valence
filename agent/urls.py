@@ -40,7 +40,7 @@ from agent.views.skill import (
 )
 
 from agent.views.thread_config import (
-    ThreadConfig,
+    ThreadConfigView,
     ThreadConfigListView
 )
 
@@ -70,14 +70,14 @@ urlpatterns = [
     ),
 
     path(
-        "llm-config/",
+        "mcp-server-config/",
         MCPServerConfigListView.as_view(),
         name="mcp-server-config-list",
     ),
 
     path(
         "tool-hide-rule/<uuid:uuid>/",
-        ToolhideRuleView.as_view(),
+        ToolHideRuleView.as_view(),
         name="tool-hide-rule",
     ),
 
@@ -137,7 +137,7 @@ urlpatterns = [
 
     path(
         "thread-config/<uuid:uuid>",
-        ThreadConfig.as_view(),
+        ThreadConfigView.as_view(),
         name="thread-config",
     ),
 

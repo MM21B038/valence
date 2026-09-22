@@ -18,7 +18,7 @@ async def get_server_prompts(server: MCPServerConfig):
         servers = [Server.from_config(server)]
         client = MCPClient(servers)
         client.connect()
-        return await client.get_prompts()
+        return await client.get_prompt()
     except Exception as e:
         raise GetMCPPromptsError(str(e))
 

@@ -15,7 +15,7 @@ from a2a.types import (
 from a2a.utils import TransportProtocol
 from pydantic import BaseModel, Field, ConfigDict
 from langchain_core.tools import tool
-from agent.services import Thread
+from agent.services.thread import Thread
 from agent.models import InternalTool
 
 class A2ARequest(BaseModel):

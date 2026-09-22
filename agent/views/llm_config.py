@@ -4,7 +4,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from agent.models import LLMConfig
-from agent.serializers import LLMConfigSerializer, LLMConfigListSerializer
+from agent.serializers import LLMConfigSerializer
 
 class LLMConfigPagination(PageNumberPagination):
     page_size = 10
@@ -75,7 +75,7 @@ class LLMConfigView(GenericAPIView):
 class LLMConfigListView(GenericAPIView):
 
     queryset = LLMConfig.objects.all()
-    serializer_class = LLMConfigListSerializer
+    serializer_class = LLMConfigSerializer
     pagination_class = LLMConfigPagination
 
     def get(self, request):

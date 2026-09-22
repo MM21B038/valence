@@ -16,11 +16,11 @@ class LLMConfigSerializer(serializers.ModelSerializer):
         model = LLMConfig
         fields = "__all__"
         read_only_fields = ['id', 'uuid', 'created_at']
-
-class LLMConfigListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = LLMConfig
-        fields = ['uuid', 'provider', 'model']
+        extra_kwargs = {
+            "api_key": {
+                "write_only": True
+            }
+        }
 
 class InternalToolSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,14 +29,14 @@ class InternalToolSerializer(serializers.ModelSerializer):
 
 class MCPServerConfigSerializer(serializers.ModelSerializer):
     class Meta:
-        model = LLMConfig
+        model = MCPServerConfig
         fields = "__all__"
         read_only_fields = ['id', 'uuid', 'created_at']
 
 class MCPServerConfigListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = LLMConfig
-        fields = ['uuid', 'name', 'transport']
+        model = MCPServerConfig
+        fields = "__all__"
 
 class ToolHideRuleSerializer(serializers.ModelSerializer):
     class Meta:

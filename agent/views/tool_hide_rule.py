@@ -1,9 +1,9 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from agent.models import ToolHideRuleModel
-from agent.serailizers import ToolHideRuleSerializer, ToolHideRuleListSerializer
+from agent.serializers import ToolHideRuleSerializer, ToolHideRuleListSerializer
 
 class ToolHideRuleView(GenericAPIView):
 
@@ -45,7 +45,7 @@ class ToolHideRuleView(GenericAPIView):
             data=serializer.data
         )
 
-class ToolHideRuleListView(GenericView):
+class ToolHideRuleListView(GenericAPIView):
 
     queryset = ToolHideRuleModel.objects.all()
     serializer_class = ToolHideRuleListSerializer

@@ -8,7 +8,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from agent.models import MCPServerConfig, ToolHideRuleModel, Prompt
 from agent.serializers import MCPServerConfigSerializer, MCPServerConfigListSerializer
-from agent.backend import get_server_tools
+from agent.backend import get_server_tools, get_server_prompts
 
 async def create_thread_hide_rule(server: MCPServerConfig):
 
