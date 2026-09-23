@@ -15,7 +15,6 @@ class LLMConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = LLMConfig
         fields = "__all__"
-        read_only_fields = ['id', 'uuid', 'created_at']
         extra_kwargs = {
             "api_key": {
                 "write_only": True
@@ -31,51 +30,90 @@ class MCPServerConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = MCPServerConfig
         fields = "__all__"
-        read_only_fields = ['id', 'uuid', 'created_at']
 
 class MCPServerConfigListSerializer(serializers.ModelSerializer):
     class Meta:
         model = MCPServerConfig
-        fields = "__all__"
+        fields = [
+            "uuid",
+            "name",
+            "transport"
+        ]
 
 class ToolHideRuleSerializer(serializers.ModelSerializer):
     class Meta:
         model = ToolHideRuleModel
         fields = "__all__"
-        read_only_fields = ['id', 'uuid', 'server', 'name', 'created_at']
-
-class ToolHideRuleListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ToolHideRuleModel
-        fields = ['uuid', 'server', 'name']
 
 class CompressionPromptSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompressionPrompt
         fields = "__all__"
-        read_only_fields = ['id', 'uuid', 'created_at']
+
+class CompressionPromptListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompressionPrompt
+        fields = "__all__"
+        extra_kwargs = {
+            "prompt": {
+                "write_only": True
+            }
+        }
 
 class PromptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prompt
         fields = "__all__"
-        read_only_fields = ['id', 'uuid', 'created_at', 'server']
+
+class PromptListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prompt
+        fields = "__all__"
+        extra_kwargs = {
+            "content": {
+                "write_only": True
+            }
+        }
 
 class SystemPromptSerializer(serializers.ModelSerializer):
     class Meta:
         model = SystemPrompt
         fields = "__all__"
-        read_only_fields = ['id', 'uuid', 'created_at']
+
+class SystemPromptListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SystemPrompt
+        fields = "__all__"
+        extra_kwargs = {
+            "content": {
+                "write_only": True
+            }
+        }
 
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
         fields = "__all__"
-        read_only_fields = ['id', 'uuid', 'created_at']
+
+class SkillListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Skill
+        fields = "__all__"
+        extra_kwargs = {
+            "content": {
+                "write_only": True
+            }
+        }
 
 class ThreadConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = ThreadConfig
         fields = "__all__"
-        read_only_fields = ['id', 'uuid', 'created_at']
 
+class ThreadConfigListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ThreadConfig
+        fields = [
+            "uuid",
+            "name",
+        ]

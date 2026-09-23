@@ -3,12 +3,12 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from agent.models import ToolHideRuleModel
-from agent.serializers import ToolHideRuleSerializer, ToolHideRuleListSerializer
+from agent.serializers import ToolHideRuleSerializer
 
 class ToolHideRuleView(GenericAPIView):
 
     queryset = ToolHideRuleModel.objects.all()
-    serailizer_class = ToolHideRuleSerializer
+    serializer_class = ToolHideRuleSerializer
 
     def get(self, request, uuid):
 
@@ -48,7 +48,7 @@ class ToolHideRuleView(GenericAPIView):
 class ToolHideRuleListView(GenericAPIView):
 
     queryset = ToolHideRuleModel.objects.all()
-    serializer_class = ToolHideRuleListSerializer
+    serializer_class = ToolHideRuleSerializer
 
     def get(self, request):
         serializer = self.get_serializer(

@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from agent.models import CompressionPrompt
-from agent.serializers import CompressionPromptSerializer
+from agent.serializers import CompressionPromptSerializer, CompressionPromptListSerializer
 
 class CompressionPromptView(GenericAPIView):
 
@@ -34,7 +34,7 @@ class CompressionPromptView(GenericAPIView):
             data=serializer.data
         )
 
-    def put(self, request, uuid):
+    def patch(self, request, uuid):
         prompt = get_object_or_404(
             self.get_queryset(),
             uuid=uuid
@@ -64,7 +64,7 @@ class CompressionPromptView(GenericAPIView):
 class CompressionPromptListView(GenericAPIView):
 
     queryset = CompressionPrompt.objects.all()
-    serializer_class = CompressionPromptSerializer
+    serializer_class = CompressionPromptListSerializer
 
     def get(self, request):
         serializer = self.get_serializer(

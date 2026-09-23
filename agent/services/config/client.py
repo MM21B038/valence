@@ -39,7 +39,7 @@ class MCPClient:
         if self.client is None:
             return
         
-        return await self.client.get_tools()
+        return await self.client.get_tools() or []
         
 
     async def list_prompts(self, server_name: str):
@@ -51,7 +51,7 @@ class MCPClient:
         async with self.client.session(server_name) as session:
             result = await session.list_prompts()
 
-        return result
+        return result.prompts or []
 
     async def list_resources(self, server_name: str):
         self._ensure_connected()
@@ -62,7 +62,7 @@ class MCPClient:
         async with self.client.session(server_name) as session:
             result = await session.list_resources()
 
-        return result
+        return result.resources or []
 
     async def get_prompt(
         self,

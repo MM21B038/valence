@@ -1,9 +1,9 @@
 from django.db import models
 
 class LLMProvider(models.TextChoices):
-    OPENAI = "openai"
-    OPENAI_COMPATIBLE = "openai-compatible"
-    OPENROUTER = "openrouter"
+    OPENAI = "openai", "OpenAI"
+    OPENAI_COMPATIBLE = "openai-compatible", "OpenAI Compatible"
+    OPEN_ROUTER = "open-router", "OpenRouter"
 
 class ServerTransport(models.TextChoices):
     STDIO = "stdio"
