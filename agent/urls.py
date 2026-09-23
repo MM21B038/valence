@@ -1,8 +1,10 @@
 from django.urls import path
 
 from agent.views.llm_config import (
+    LLMProviderOptionView,
     LLMConfigView,
-    LLMConfigListView
+    LLMConfigListView,
+    LLMChatView
 )
 
 from agent.views.internal_tool import (
@@ -10,6 +12,7 @@ from agent.views.internal_tool import (
 )
 
 from agent.views.mcp_server_config import (
+    MCPServerTransportOptionView,
     MCPServerConfigView,
     MCPServerConfigListView
 )
@@ -46,6 +49,12 @@ from agent.views.thread_config import (
 
 urlpatterns = [
     path(
+        "llm-provider/",
+        LLMProviderOptionView.as_view(),
+        name="llm-provider"
+    ),
+    
+    path(
         "llm-config/<uuid:uuid>/",
         LLMConfigView.as_view(),
         name="llm-config",
@@ -58,9 +67,21 @@ urlpatterns = [
     ),
 
     path(
+        "llm-chat/<uuid:uuid>/",
+        LLMChatView.as_view(),
+        name="llm-chat"
+    ),
+
+    path(
         "internal-tool/",
         InternalToolListView.as_view(),
         name="internal-tool-list",
+    ),
+
+    path(
+        "mcp-serve-transport-option/",
+        MCPServerTransportOptionView.as_view(),
+        name="mcp-serve-transport-option",
     ),
 
     path(
@@ -142,8 +163,8 @@ urlpatterns = [
     ),
 
     path(
-        "thread-config-list/",
+        "thread-config/",
         ThreadConfigListView.as_view(),
         name="thread-config-list",
-    )
+    ),
 ]

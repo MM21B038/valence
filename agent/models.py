@@ -13,7 +13,7 @@ class LLMConfig(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.provider
+        return f"{self.provider} - {self.model}"
 
 class InternalTool(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -49,7 +49,7 @@ class ToolHideRuleModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.server.name} - {self.name}"
 
 class CompressionPrompt(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -90,7 +90,7 @@ class SystemPrompt(models.Model):
 
 class Skill(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -100,8 +100,9 @@ class Skill(models.Model):
 
 class ThreadConfig(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    system_prompt = models.ForeignKey(SystemPrompt, on_delete=models.DO_NOTHING)
-    compression_prompt = models.ForeignKey(CompressionPrompt, on_delete=models.DO_NOTHING)
+    name = models.CharField(max_length=100, unique=True)
+    system_prompt = models.ForeignKey(SystemPrompt, on_delete=models.DO_NOTHING, blank=True, null=True)
+    compression_prompt = models.ForeignKey(CompressionPrompt, on_delete=models.DO_NOTHING, blank=True, null=True)
     compression_token_limit = models.IntegerField(blank = True, null = True)
     tool_hide_rules = models.ManyToManyField(ToolHideRuleModel, blank = True, related_name="thread_configs")
     auto_hide_rule = models.BooleanField(default = False)
@@ -109,3 +110,6 @@ class ThreadConfig(models.Model):
     per_tool_token_limit = models.IntegerField(blank = True, null = True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name

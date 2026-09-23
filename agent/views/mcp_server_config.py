@@ -1,18 +1,20 @@
 import asyncio
 import threading
+from typing import cast
 from asgiref.sync import sync_to_async
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from agent.enums import ServerTransport
 from agent.models import MCPServerConfig, ToolHideRuleModel, Prompt
 from agent.serializers import MCPServerConfigSerializer, MCPServerConfigListSerializer
 from agent.backend import get_server_tools, get_server_prompts
 
 async def create_thread_hide_rule(server: MCPServerConfig):
 
-    tools = await get_server_tools(server)
+    tools = await get_server_tools(server) or []
 
     for tool in tools:
         name=tool.name
@@ -26,12 +28,25 @@ async def add_prompts(server: MCPServerConfig):
 
     prompts = await get_server_prompts(server)
 
-    for prompt in prompts:
+    for prompt in prompts or []:
         name = prompt.name
         await sync_to_async(Prompt.objects.create)(
             server=server,
             name=name,
-            content=prompt.content
+            content=prompt.prompt
+        )
+
+class MCPServerTransportOptionView(GenericAPIView):
+
+    def get(self, request):
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                "providers": [
+                    value
+                    for value, _ in ServerTransport.choices
+                ]
+            }
         )
 
 class MCPServerConfigPagination(PageNumberPagination):
@@ -103,7 +118,7 @@ class MCPServerConfigView(GenericAPIView):
 class MCPServerConfigListView(GenericAPIView):
 
     queryset = MCPServerConfig.objects.all()
-    serializer_class = MCPServerConfigListSerializer
+    serializer_class = MCPServerConfigSerializer
     pagination_class = MCPServerConfigPagination
 
     def get(self, request):
@@ -113,7 +128,7 @@ class MCPServerConfigListView(GenericAPIView):
         page = self.paginate_queryset(queryset)
 
         if page is not None:
-            serializer = self.get_serializer(
+            serializer = MCPServerConfigListSerializer(
                 page,
                 many=True
             )
@@ -122,7 +137,7 @@ class MCPServerConfigListView(GenericAPIView):
                 serializer.data
             )
 
-        serializer = self.get_serializer(
+        serializer = MCPServerConfigListSerializer(
             queryset,
             many=True
         )
@@ -138,7 +153,8 @@ class MCPServerConfigListView(GenericAPIView):
             raise_exception=True
         )
 
-        config = serializer.save()
+        config = cast(MCPServerConfig, serializer.save())
+
 
         threading.Thread(
             target=lambda: asyncio.run(create_thread_hide_rule(config)),

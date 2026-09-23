@@ -44,7 +44,7 @@ class LLM:
                 api_key=api_key,
             )
 
-        elif self.provider == LLMProvider.OPENROUTER:
+        elif self.provider == LLMProvider.OPEN_ROUTER:
             return ChatOpenRouter(
                 model=self.model,
                 api_key=api_key,

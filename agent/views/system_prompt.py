@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from agent.models import SystemPrompt
-from agent.serializers import SystemPromptSerializer
+from agent.serializers import SystemPromptSerializer, SystemPromptListSerializer
 
 class SystemPromptView(GenericAPIView):
 
@@ -34,7 +34,7 @@ class SystemPromptView(GenericAPIView):
             data=serializer.data
         )
 
-    def put(self, request, uuid):
+    def patch(self, request, uuid):
         prompt = get_object_or_404(
             self.get_queryset(),
             uuid=uuid
@@ -64,7 +64,7 @@ class SystemPromptView(GenericAPIView):
 class SystemPromptListView(GenericAPIView):
 
     queryset = SystemPrompt.objects.all()
-    serializer_class = SystemPromptSerializer
+    serializer_class = SystemPromptListSerializer
 
     def get(self, request):
         serializer = self.get_serializer(
