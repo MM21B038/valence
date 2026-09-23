@@ -18,27 +18,33 @@ async def get_server_tools(server: MCPServerConfig):
     except Exception as e:
         raise GetMCPToolsError(str(e))
 
-async def get_server_prompts(server: MCPServerConfig):
-    server_name = server.name
+def _format_prompt_messages(messages) -> str:
+    parts = []
+    for message in messages:
+        content = message.content
+        if isinstance(content, str):
+            parts.append(content)
+        else:
+            parts.append(str(content))
+    return "\n\n".join(parts)
+
+
+async def get_server_prompts(server: MCPServerConfig) -> list[tuple[str, str]]:
     try:
         servers = [Server.from_config(server)]
         client = MCPClient(servers)
         client.connect()
-        prompts = await client.list_prompts(server_name) or []
+        result = await client.list_prompts(server.name)
+        if result is None:
+            return []
 
-        result = []
-        for prompt in prompts:
-            prompt_messages = await client.get_prompt(
-                server_name,
-                prompt.name,
-            )
-            for message in prompt_messages or []:
-                result.append(
-                    ServerPrompt(
-                        name=prompt.name,
-                        prompt=str(message.content)
-                    )
-                )
+        prompts: list[tuple[str, str]] = []
+        for prompt_meta in result.prompts:
+            messages = await client.get_prompt(server.name, prompt_meta.name)
+            if not messages:
+                continue
+            prompts.append((prompt_meta.name, _format_prompt_messages(messages)))
+        return prompts
     except Exception as e:
         raise GetMCPPromptsError(str(e))
 
