@@ -37,7 +37,9 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'agent',
     'protocol',
+    'dnd',
     'rest_framework',
+    'colorfield',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

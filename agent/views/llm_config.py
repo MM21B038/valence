@@ -3,6 +3,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from django.shortcuts import get_object_or_404
 from agent.enums import LLMProvider
 from agent.models import LLMConfig
@@ -138,6 +139,8 @@ class LLMConfigListView(GenericAPIView):
 class LLMChatView(GenericAPIView):
 
     queryset = LLMConfig.objects.all()
+    authentication_classes = []
+    permission_classes = [AllowAny]
 
     def post(self, request, uuid):
         message = request.data.get("message")
