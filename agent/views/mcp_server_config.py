@@ -31,7 +31,7 @@ async def add_prompts(server: MCPServerConfig):
     for name, content in prompts:
         await sync_to_async(Prompt.objects.update_or_create)(
             name=name,
-            content=content
+            content=content,
             defaults={"server": server, "content": content},
         )
 
