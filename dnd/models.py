@@ -11,6 +11,7 @@ class AppTheme(models.Model):
     mid = ColorField(default="#3D4242")
     accent = ColorField(default="#8A8D8D")
     sand = ColorField(default="#B5AF99")
+    default = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return self.name
@@ -35,7 +36,7 @@ class Component(models.Model):
     position_x = models.FloatField(default=0.0)
     position_y = models.FloatField(default=0.0)
     color_code = ColorField(default="#47B9B9")
-    component_uuid = models.UUIDField(editable=True)
+    component_uuid = models.UUIDField()
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
