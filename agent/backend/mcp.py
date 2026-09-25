@@ -34,12 +34,12 @@ async def get_server_prompts(server: MCPServerConfig) -> list[tuple[str, str]]:
         servers = [Server.from_config(server)]
         client = MCPClient(servers)
         client.connect()
-        result = await client.list_prompts(server.name)
-        if result is None:
+        prompt_list = await client.list_prompts(server.name)
+        if not prompt_list:
             return []
 
         prompts: list[tuple[str, str]] = []
-        for prompt_meta in result.prompts:
+        for prompt_meta in prompt_list:
             messages = await client.get_prompt(server.name, prompt_meta.name)
             if not messages:
                 continue
