@@ -5,20 +5,18 @@ from agent.models import LLMConfig, MCPServerConfig, ThreadConfig, InternalTool,
 
 
 class SkillTag(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
-
-class SkillExample(models.Model):
-    content = models.TextField(max_length=500)
     
 class AgentSkillModel(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
     tags = models.ManyToManyField(SkillTag, blank=True, related_name='agent_skills')
-    examples = models.ManyToManyField(SkillExample, blank=True, related_name='agent_skills')
+    examples = models.JSONField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
