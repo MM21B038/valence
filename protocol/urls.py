@@ -1,6 +1,7 @@
 from django.urls import path
 from protocol.views.agent_skill import AgentSkillView, AgentSkillListView
 from protocol.views.skill_tag import SkillTagView
+from protocol.views.agent_interface import AgentInterfaceView
 
 urlpatterns = [
 
@@ -22,10 +23,22 @@ urlpatterns = [
         AgentSkillView.as_view(),
         name='agent-skill',
     ),
-    
+
     path(
         'agent-skill/',
         AgentSkillListView.as_view(),
         name='agent-skill-list',
+    ),
+
+    path(
+        'agent-interface/',
+        AgentInterfaceView.as_view(),
+        name='agent-interface',
+    ),
+
+    path(
+        'agent-interface/<uuid:uuid>/',
+        AgentInterfaceView.as_view(),
+        name='agent-interface-patch-delete',
     ),
 ]
