@@ -3,6 +3,7 @@ from protocol.views.agent_skill import AgentSkillView, AgentSkillListView
 from protocol.views.skill_tag import SkillTagView
 from protocol.views.agent_interface import AgentInterfaceView
 from protocol.views.agent_card import AgentCardView, AgentCardListView
+from protocol.views.agent_executor import AgentExecutorView, AgentExecutorListView
 
 urlpatterns = [
 
@@ -53,5 +54,17 @@ urlpatterns = [
         'agent-card/',
         AgentCardListView.as_view(),
         name='agent-card-list',
+    ),
+
+    path(
+        'agent-executor/<uuid:uuid>/',
+        AgentExecutorView.as_view(),
+        name='agent-executor',
+    ),
+
+    path(
+        'agent-executor/',
+        AgentExecutorListView.as_view(),
+        name='agent-executor-list',
     ),
 ]

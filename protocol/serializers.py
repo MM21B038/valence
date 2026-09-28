@@ -4,6 +4,7 @@ from protocol.models import (
     AgentSkillModel,
     AgentInterfaceModel,
     AgentCardModel,
+    AgentExecutorModel,
 )
 
 class SkillTagSerializer(serializers.ModelSerializer):
@@ -35,3 +36,13 @@ class AgentCardListSerializer(serializers.ModelSerializer):
     class Meta:
         model = AgentCardModel
         fields = ['uuid', 'name', 'version']
+
+class AgentExecutorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AgentExecutorModel
+        fields = '__all__'
+
+class AgentExecutorListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AgentExecutorModel
+        fields = ['uuid', 'name', 'host', 'port', 'rpc_url']
