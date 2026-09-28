@@ -3,6 +3,7 @@ from protocol.models import (
     SkillTag,
     AgentSkillModel,
     AgentInterfaceModel,
+    AgentCardModel,
 )
 
 class SkillTagSerializer(serializers.ModelSerializer):
@@ -24,3 +25,13 @@ class AgentInterfaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = AgentInterfaceModel
         fields = '__all__'
+
+class AgentCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AgentCardModel
+        fields = '__all__'
+
+class AgentCardListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AgentCardModel
+        fields = ['uuid', 'name', 'version']
