@@ -1,6 +1,9 @@
 from django.urls import path
 from protocol.views.agent_skill import AgentSkillView, AgentSkillListView
 from protocol.views.skill_tag import SkillTagView
+from protocol.views.agent_interface import AgentInterfaceView
+from protocol.views.agent_card import AgentCardView, AgentCardListView
+from protocol.views.agent_executor import AgentExecutorView, AgentExecutorListView
 
 urlpatterns = [
 
@@ -22,10 +25,46 @@ urlpatterns = [
         AgentSkillView.as_view(),
         name='agent-skill',
     ),
-    
+
     path(
         'agent-skill/',
         AgentSkillListView.as_view(),
         name='agent-skill-list',
+    ),
+
+    path(
+        'agent-interface/',
+        AgentInterfaceView.as_view(),
+        name='agent-interface',
+    ),
+
+    path(
+        'agent-interface/<uuid:uuid>/',
+        AgentInterfaceView.as_view(),
+        name='agent-interface-patch-delete',
+    ),
+
+    path(
+        'agent-card/<uuid:uuid>/',
+        AgentCardView.as_view(),
+        name='agent-card',
+    ),
+
+    path(
+        'agent-card/',
+        AgentCardListView.as_view(),
+        name='agent-card-list',
+    ),
+
+    path(
+        'agent-executor/<uuid:uuid>/',
+        AgentExecutorView.as_view(),
+        name='agent-executor',
+    ),
+
+    path(
+        'agent-executor/',
+        AgentExecutorListView.as_view(),
+        name='agent-executor-list',
     ),
 ]
