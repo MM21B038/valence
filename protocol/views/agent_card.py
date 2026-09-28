@@ -43,14 +43,14 @@ class AgentCardView(GenericAPIView):
             status = status.HTTP_204_NO_CONTENT,
         )
 
-class AgentCardListView(GenericAPIView):
+class AgentCardListCreateView(GenericAPIView):
 
     queryset = AgentCardModel.objects.all()
-    serializer_class = AgentCardListSerializer
+    serializer_class = AgentCardSerializer
 
     def get(self, request):
         agent_card = self.get_queryset()
-        serializer = self.get_serializer(agent_card, many=True)
+        serializer = AgentCardListSerializer(agent_card, many=True)
 
         return Response(
             status = status.HTTP_200_OK,
@@ -58,7 +58,7 @@ class AgentCardListView(GenericAPIView):
         )
 
     def post(self, request):
-        serializer = AgentCardSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 

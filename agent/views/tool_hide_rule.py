@@ -45,7 +45,7 @@ class ToolHideRuleView(GenericAPIView):
             data=serializer.data
         )
 
-class ToolHideRuleListView(GenericAPIView):
+class ToolHideRuleListCreateView(GenericAPIView):
 
     queryset = ToolHideRuleModel.objects.all()
     serializer_class = ToolHideRuleSerializer

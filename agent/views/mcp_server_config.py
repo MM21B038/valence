@@ -114,7 +114,7 @@ class MCPServerConfigView(GenericAPIView):
             status=status.HTTP_204_NO_CONTENT
         )
 
-class MCPServerConfigListView(GenericAPIView):
+class MCPServerConfigListCreateView(GenericAPIView):
 
     queryset = MCPServerConfig.objects.all()
     serializer_class = MCPServerConfigSerializer

@@ -61,7 +61,7 @@ class CompressionPromptView(GenericAPIView):
             status=status.HTTP_204_NO_CONTENT
         )
 
-class CompressionPromptListView(GenericAPIView):
+class CompressionPromptListCreateView(GenericAPIView):
 
     queryset = CompressionPrompt.objects.all()
     serializer_class = CompressionPromptListSerializer

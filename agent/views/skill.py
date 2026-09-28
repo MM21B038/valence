@@ -61,7 +61,7 @@ class SkillView(GenericAPIView):
             status=status.HTTP_204_NO_CONTENT
         )
 
-class SkillListView(GenericAPIView):
+class SkillListCreateView(GenericAPIView):
 
     queryset = Skill.objects.all()
     serializer_class = SkillListSerializer

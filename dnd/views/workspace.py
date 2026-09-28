@@ -1,31 +1,33 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from protocol.models import AgentExecutorModel
-from protocol.serializers import AgentExecutorSerializer, AgentExecutorListSerializer
+from dnd.models import Workspace
+from dnd.serializers import WorkspaceSerializer, WorkspaceListSerializer
 
-class AgentExecutorView(GenericAPIView):
+class WorkspaceView(GenericAPIView):
 
-    queryset = AgentExecutorModel.objects.all()
-    serializer_class = AgentExecutorSerializer
+    queryset = Workspace.objects.all()
+    serializer_class = Workspace
 
     def get(self, request, uuid):
-        agent_executor = get_object_or_404(self.get_queryset(), uuid=uuid)
-        serializer = self.get_serializer(agent_executor)
+        workspace = get_object_or_404(self.get_serializer(), uuid=uuid)
+        serializer = self.get_serializer(workspace)
 
         return Response(
             status = status.HTTP_200_OK,
             data = serializer.data,
         )
-
+    
     def patch(self, request, uuid):
-        agent_executor = get_object_or_404(self.get_queryset(), uuid=uuid)
+        workspace = get_object_or_404(self.get_queryset(), uuid=uuid)
         serializer = self.get_serializer(
-            agent_executor,
+            workspace,
             data=request.data,
             partial=True,
         )
+
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
@@ -35,22 +37,23 @@ class AgentExecutorView(GenericAPIView):
         )
 
     def delete(self, request, uuid):
-        agent_executor = get_object_or_404(self.get_queryset(), uuid=uuid)
-        agent_executor.delete()
+        workspace = get_object_or_404(self.get_queryset(), uuid=uuid)
+        workspace.delete()
 
         return Response(
-            status = status.HTTP_401_NO_CONTENT,
+            status = status.HTTP_204_NO_CONTENT,
         )
+    
+class WorkspaceListCreateView(GenericAPIView):
 
-class AgentExecutorListCreateView(GenericAPIView):
+    queryset = Workspace.objects.all()
+    serializer_class = WorkspaceSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['type']
 
-    queryset = AgentExecutorModel.objects.all()
-    serializer_class = AgentExecutorSerializer
-   
     def get(self, request):
-        agent_executor = self.get_queryset()
-        serializer = AgentExecutorListSerializer(agent_executor, many=True)
-        # serializer = self.get_serializer(agent_executor, many=True)
+        workspace = self.filter_queryset(self.get_queryset())
+        serializer = WorkspaceListSerializer(workspace, many=True)
 
         return Response(
             status = status.HTTP_200_OK,
@@ -66,3 +69,4 @@ class AgentExecutorListCreateView(GenericAPIView):
             status = status.HTTP_201_CREATED,
             data = serializer.data,
         )
+

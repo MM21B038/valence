@@ -16,16 +16,6 @@ class AppTheme(models.Model):
     def __str__(self) -> str:
         return self.name
 
-class Workspace(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=30, unique=True)
-    type = models.TextField(max_length=30, choices=WorkspaceTypeChoices.choices, default=WorkspaceTypeChoices.A2A)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name
-
 class ServerStack(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     servers = models.ManyToManyField(MCPServerConfig, blank=True, related_name='stack')
@@ -36,13 +26,12 @@ class Component(models.Model):
     position_x = models.FloatField(default=0.0)
     position_y = models.FloatField(default=0.0)
     color_code = ColorField(default="#47B9B9")
-    component_uuid = models.UUIDField()
-    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
+    component_uuid = models.UUIDField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.workspace.name} - {self.type}"
+        return f"{self.type}"
 
 class Connection(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -50,7 +39,17 @@ class Connection(models.Model):
     target = models.ForeignKey(Component, on_delete=models.DO_NOTHING, related_name="incoming")
 
     
+class Workspace(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=30, unique=True)
+    type = models.TextField(max_length=30, choices=WorkspaceTypeChoices.choices, default=WorkspaceTypeChoices.A2A)
+    components = models.ManyToManyField(Component, blank=True, related_name='workspace')
+    connections = models.ManyToManyField(Connection, blank=True, related_name='workspace')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
 
 
 

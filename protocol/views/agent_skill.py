@@ -47,14 +47,14 @@ class AgentSkillView(GenericAPIView):
         )
 
 
-class AgentSkillListView(GenericAPIView):
+class AgentSkillListCreateView(GenericAPIView):
 
     queryset = AgentSkillModel.objects.all()
     serializer_class = AgentSkillListSerializer
 
     def get(self, request):
         agent_skills = self.get_queryset()
-        serializer = self.get_serializer(agent_skills, many=True)
+        serializer = AgentSkillListSerializer(agent_skills, many=True)
 
         return Response(
             status = status.HTTP_200_OK,
@@ -62,7 +62,7 @@ class AgentSkillListView(GenericAPIView):
         )
 
     def post(self, request):
-        serializer = AgentSkillSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 

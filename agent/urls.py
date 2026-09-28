@@ -3,48 +3,48 @@ from django.urls import path
 from agent.views.llm_config import (
     LLMProviderOptionView,
     LLMConfigView,
-    LLMConfigListView,
+    LLMConfigListCreateView,
     LLMChatView
 )
 
 from agent.views.internal_tool import (
-    InternalToolListView
+    InternalToolListCreateView
 )
 
 from agent.views.mcp_server_config import (
     MCPServerTransportOptionView,
     MCPServerConfigView,
-    MCPServerConfigListView
+    MCPServerConfigListCreateView
 )
 
 from agent.views.tool_hide_rule import (
     ToolHideRuleView,
-    ToolHideRuleListView
+    ToolHideRuleListCreateView
 )
 
 from agent.views.compression_prompt import(
     CompressionPromptView,
-    CompressionPromptListView
+    CompressionPromptListCreateView
 )
 
 from agent.views.prompt import (
     PromptView,
-    PromptListView
+    PromptListCreateView
 )
 
 from agent.views.system_prompt import (
     SystemPromptView,
-    SystemPromptListView
+    SystemPromptListCreateView
 )
 
 from agent.views.skill import (
     SkillView,
-    SkillListView
+    SkillListCreateView
 )
 
 from agent.views.thread_config import (
     ThreadConfigView,
-    ThreadConfigListView
+    ThreadConfigListCreateView
 )
 
 urlpatterns = [
@@ -62,7 +62,7 @@ urlpatterns = [
 
     path(
         "llm-config/",
-        LLMConfigListView.as_view(),
+        LLMConfigListCreateView.as_view(),
         name="llm-config-list",
     ),
 
@@ -74,7 +74,7 @@ urlpatterns = [
 
     path(
         "internal-tool/",
-        InternalToolListView.as_view(),
+        InternalToolListCreateView.as_view(),
         name="internal-tool-list",
     ),
 
@@ -92,7 +92,7 @@ urlpatterns = [
 
     path(
         "mcp-server-config/",
-        MCPServerConfigListView.as_view(),
+        MCPServerConfigListCreateView.as_view(),
         name="mcp-server-config-list",
     ),
 
@@ -104,7 +104,7 @@ urlpatterns = [
 
     path(
         "tool-hide-rule/",
-        ToolHideRuleListView.as_view(),
+        ToolHideRuleListCreateView.as_view(),
         name="tool-hide-rule-list",
     ),
 
@@ -116,7 +116,7 @@ urlpatterns = [
 
     path(
         "compression-prompt/",
-        CompressionPromptListView.as_view(),
+        CompressionPromptListCreateView.as_view(),
         name="compression-prompt-list",
     ),
 
@@ -128,7 +128,7 @@ urlpatterns = [
 
     path(
         "prompt/",
-        PromptListView.as_view(),
+        PromptListCreateView.as_view(),
         name="prompt-list",
     ),
 
@@ -140,7 +140,7 @@ urlpatterns = [
 
     path(
         "system-prompt/",
-        SystemPromptListView.as_view(),
+        SystemPromptListCreateView.as_view(),
         name="system-prompt-list",
     ),
 
@@ -152,7 +152,7 @@ urlpatterns = [
 
     path(
         "skill/",
-        SkillListView.as_view(),
+        SkillListCreateView.as_view(),
         name="skill-list",
     ),
 
@@ -164,7 +164,7 @@ urlpatterns = [
 
     path(
         "thread-config/",
-        ThreadConfigListView.as_view(),
+        ThreadConfigListCreateView.as_view(),
         name="thread-config-list",
     ),
 ]

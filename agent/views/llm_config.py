@@ -91,7 +91,7 @@ class LLMConfigView(GenericAPIView):
             status=status.HTTP_204_NO_CONTENT
         )
 
-class LLMConfigListView(GenericAPIView):
+class LLMConfigListCreateView(GenericAPIView):
 
     queryset = LLMConfig.objects.all()
     serializer_class = LLMConfigSerializer

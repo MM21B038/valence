@@ -46,3 +46,4 @@ class AgentExecutorListSerializer(serializers.ModelSerializer):
     class Meta:
         model = AgentExecutorModel
         fields = ['uuid', 'name', 'host', 'port', 'rpc_url']
+        
