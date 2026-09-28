@@ -26,7 +26,7 @@ class Component(models.Model):
     position_x = models.FloatField(default=0.0)
     position_y = models.FloatField(default=0.0)
     color_code = ColorField(default="#47B9B9")
-    component_uuid = models.UUIDField()
+    component_uuid = models.UUIDField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -3,6 +3,7 @@ from dnd.models import (
     AppTheme,
     ServerStack,
     Component,
+    Connection,
     Workspace,
 )
 
@@ -19,6 +20,11 @@ class ServerStackSerializer(serializers.ModelSerializer):
 class ComponentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Component
+        fields = '__all__'
+
+class ConnectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Connection
         fields = '__all__'
 
 class WorkspaceSerializer(serializers.ModelSerializer):
