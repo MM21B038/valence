@@ -35,11 +35,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'dnd',
     'agent',
     'protocol',
-    'dnd',
-    'rest_framework',
     'colorfield',
+    'django_filters',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -61,7 +61,7 @@ class SystemPromptView(GenericAPIView):
             status=status.HTTP_204_NO_CONTENT
         )
 
-class SystemPromptListView(GenericAPIView):
+class SystemPromptListCreateView(GenericAPIView):
 
     queryset = SystemPrompt.objects.all()
     serializer_class = SystemPromptListSerializer

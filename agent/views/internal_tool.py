@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from agent.models import InternalTool
 from agent.serializers import InternalToolSerializer
 
-class InternalToolListView(GenericAPIView):
+class InternalToolListCreateView(GenericAPIView):
 
     queryset = InternalTool.objects.all()
     serializer_class = InternalToolSerializer
