@@ -39,8 +39,8 @@ class AgentCardView(GenericAPIView):
         agent_card = get_object_or_404(self.get_queryset(), uuid=uuid)
         agent_card.delete()
 
-        return Reponse(
-            status = status.HTTP_204_NO_CONTENT,
+        return Response(
+            status=status.HTTP_204_NO_CONTENT,
         )
 
 class AgentCardListCreateView(GenericAPIView):

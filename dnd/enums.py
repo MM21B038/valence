@@ -13,3 +13,5 @@ class ComponentTypeChoices(models.TextChoices):
     AGENT_CARD = 'agent-card'
     AGENT_EXECUTOR = 'agent-executor'
     SERVER_STACK = 'server-stack'
+    AGENT_SKILL_STACK = 'agent-skill-stack'
+    AGENT_INTERFACE_STACK = 'agent-interface-stack'
