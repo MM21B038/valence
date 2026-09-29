@@ -3,6 +3,7 @@ from django.db import models
 from colorfield.fields import ColorField
 from dnd.enums import WorkspaceTypeChoices, ComponentTypeChoices
 from agent.models import MCPServerConfig
+from protocol.models import AgentSkillModel, AgentInterfaceModel
 
 class AppTheme(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -19,6 +20,14 @@ class AppTheme(models.Model):
 class ServerStack(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     servers = models.ManyToManyField(MCPServerConfig, blank=True, related_name='stack')
+
+class AgentSkillStack(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    agent_skills = models.ManyToManyField(AgentSkillModel, blank=True, related_name='stack')
+
+class AgentInterfaceStack(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    agent_interfaces = models.ManyToManyField(AgentInterfaceModel, blank=True, related_name='stacks')
 
 class Component(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

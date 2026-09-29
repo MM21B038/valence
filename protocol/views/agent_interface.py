@@ -10,38 +10,45 @@ class AgentInterfaceView(GenericAPIView):
     queryset = AgentInterfaceModel.objects.all()
     serializer_class = AgentInterfaceSerializer
 
-    def get(self, request):
-        agent_interface = self.get_queryset()
-        serializer = self.get_serializer(agent_interface, many=True)
+    def get(self, request, uuid=None):
+        if uuid is not None:
+            agent_interface = get_object_or_404(self.get_queryset(), uuid=uuid)
+            serializer = self.get_serializer(agent_interface)
+            return Response(
+                status=status.HTTP_200_OK,
+                data=serializer.data,
+            )
 
+        agent_interfaces = self.get_queryset()
+        serializer = self.get_serializer(agent_interfaces, many=True)
         return Response(
-            status = status.HTTP_200_OK,
-            data = serializer.data,
+            status=status.HTTP_200_OK,
+            data=serializer.data,
         )
 
     def post(self, request):
-        serializer = self.get_serializer(request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(
-            status = status.HTTP_201_CREATED,
-            data = serializer.data,
+            status=status.HTTP_201_CREATED,
+            data=serializer.data,
         )
 
     def patch(self, request, uuid):
         agent_interface = get_object_or_404(self.get_queryset(), uuid=uuid)
-        serializer = get_serializer(
+        serializer = self.get_serializer(
             agent_interface,
-            data = request.data,
-            partial = True,
+            data=request.data,
+            partial=True,
         )
-        serializer.is_valid(raise_exception = True)
+        serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(
-            status = status.HTTP_200_OK,
-            data = serializer.data,
+            status=status.HTTP_200_OK,
+            data=serializer.data,
         )
 
     def delete(self, request, uuid):
@@ -49,5 +56,5 @@ class AgentInterfaceView(GenericAPIView):
         agent_interface.delete()
 
         return Response(
-            status = status.HTTP_401_NO_CONTENT,
+            status=status.HTTP_204_NO_CONTENT,
         )

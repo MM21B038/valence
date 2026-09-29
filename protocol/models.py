@@ -25,7 +25,8 @@ class AgentSkillModel(models.Model):
 
 class AgentInterfaceModel(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    url = models.URLField(blank=True, null=True)
+    host = models.CharField(max_length=20, default="127.0.0.1")
+    port = models.IntegerField(default=8000)
     protocol_binding = models.CharField(max_length=100, choices=TransportProtocolChoices, default=TransportProtocolChoices.JSONRPC)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
