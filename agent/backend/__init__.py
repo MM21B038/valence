@@ -1,3 +1,8 @@
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "valence.settings")
+import django
+django.setup()
+
 from .agent import get_agent
 from .prompt import get_system_prompt
 from .thread import get_thread

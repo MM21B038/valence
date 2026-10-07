@@ -1,3 +1,8 @@
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "valence.settings")
+import django
+django.setup()
+
 from .skill import get_agent_skill
 from .interface import get_agent_interface
 from .card import get_agent_card

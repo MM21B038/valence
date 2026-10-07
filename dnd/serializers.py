@@ -1,4 +1,7 @@
+from django.db import transaction
 from rest_framework import serializers
+from dnd.agent_executor_template import seed_agent_executor_template
+from dnd.enums import WorkspaceTypeChoices
 from dnd.models import (
     AppTheme,
     ServerStack,
@@ -51,6 +54,19 @@ class WorkspaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workspace
         fields = '__all__'
+
+    def create(self, validated_data):
+        supplied_components = validated_data.get('components') or []
+        supplied_connections = validated_data.get('connections') or []
+        with transaction.atomic():
+            workspace = super().create(validated_data)
+            if (
+                workspace.type == WorkspaceTypeChoices.AGENT_EXECUTOR
+                and not supplied_components
+                and not supplied_connections
+            ):
+                seed_agent_executor_template(workspace)
+        return workspace
 
 class WorkspaceListSerializer(serializers.ModelSerializer):
     class Meta:

@@ -6,6 +6,11 @@ from dnd.views.agent_interface_stack import AgentInterfaceStackView
 from dnd.views.component import ComponentView
 from dnd.views.connection import ConnectionView
 from dnd.views.workspace import WorkspaceView, WorkspaceListCreateView
+from protocol.views.workspace_lifecycle import (
+    WorkspaceRunView,
+    WorkspaceStopView,
+    WorkspaceStopRemoveView,
+)
 
 
 urlpatterns = [
@@ -80,6 +85,24 @@ urlpatterns = [
         'connection/',
         ConnectionView.as_view(),
         name='connection-create',
+    ),
+
+    path(
+        'workspace/<uuid:uuid>/run/',
+        WorkspaceRunView.as_view(),
+        name='workspace-run',
+    ),
+
+    path(
+        'workspace/<uuid:uuid>/stop/',
+        WorkspaceStopView.as_view(),
+        name='workspace-stop',
+    ),
+
+    path(
+        'workspace/<uuid:uuid>/stop-remove/',
+        WorkspaceStopRemoveView.as_view(),
+        name='workspace-stop-remove',
     ),
 
     path(

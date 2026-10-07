@@ -29,7 +29,16 @@ FIELD_ENCRYPTION_KEY = os.getenv('FIELD_ENCRYPTION_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv("ALLOWED_HOSTS", "*").split(",")
+    if host.strip()
+]
+
+AGENT_DOCKER_IMAGE = os.getenv("AGENT_DOCKER_IMAGE", "valence-agent:latest")
+AGENT_DOCKER_NETWORK = os.getenv("AGENT_DOCKER_NETWORK", "valence-net")
+AGENT_DOCKER_BUILD_CONTEXT = os.getenv("AGENT_DOCKER_BUILD_CONTEXT", str(BASE_DIR))
+AGENT_BIND_HOST = os.getenv("AGENT_BIND_HOST")
 
 
 # Application definition
@@ -83,9 +92,13 @@ WSGI_APPLICATION = 'valence.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ["DB_NAME"],
+        "USER": os.environ["DB_USER"],
+        "PASSWORD": os.environ["DB_PASSWORD"],
+        "HOST": os.environ.get("DB_HOST", "127.0.0.1"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
 
