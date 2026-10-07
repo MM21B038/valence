@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: valence_postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:?Set DB_USER in .env}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      POSTGRES_DB: ${DB_NAME:?Set DB_NAME in .env}
+    ports:
+      - "${DB_PORT:?Set DB_PORT in .env}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - valence-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:?Set DB_USER in .env} -d ${DB_NAME:?Set DB_NAME in .env}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  django:
+    build: .
+    image: valence-agent:latest
+    container_name: valence_django
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    command: ["sh", "-c", "uv run python manage.py migrate && uv run python manage.py runserver 0.0.0.0:8000"]
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      DB_HOST: postgres
+      ALLOWED_HOSTS: "*"
+      AGENT_DOCKER_IMAGE: valence-agent:latest
+      AGENT_DOCKER_NETWORK: valence-net
+      AGENT_DOCKER_BUILD_CONTEXT: ${AGENT_DOCKER_BUILD_CONTEXT:-.}
+      AGENT_BIND_HOST: "0.0.0.0"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - valence-net
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  valence-net:
+    name: valence-net

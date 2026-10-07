@@ -4,6 +4,7 @@ from protocol.views.skill_tag import SkillTagView
 from protocol.views.agent_interface import AgentInterfaceView
 from protocol.views.agent_card import AgentCardView, AgentCardListCreateView
 from protocol.views.agent_executor import AgentExecutorView, AgentExecutorListCreateView
+from protocol.views.agent_executor_lifecycle import AgentExecutorImageBuildView
 
 urlpatterns = [
 
@@ -54,6 +55,12 @@ urlpatterns = [
         'agent-card/',
         AgentCardListCreateView.as_view(),
         name='agent-card-list',
+    ),
+
+    path(
+        'agent-executor/image/build/',
+        AgentExecutorImageBuildView.as_view(),
+        name='agent-executor-image-build',
     ),
 
     path(

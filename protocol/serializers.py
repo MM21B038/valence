@@ -46,4 +46,16 @@ class AgentExecutorListSerializer(serializers.ModelSerializer):
     class Meta:
         model = AgentExecutorModel
         fields = ['uuid', 'name', 'host', 'port', 'rpc_url']
-        
+
+
+class AgentExecutorContainerSerializer(serializers.Serializer):
+    uuid = serializers.CharField(allow_null=True, required=False)
+    container_name = serializers.CharField(allow_null=True, required=False)
+    status = serializers.CharField()
+    image = serializers.CharField(allow_null=True, required=False)
+    message = serializers.CharField(required=False)
+
+
+class WorkspaceContainerSerializer(serializers.Serializer):
+    network = serializers.CharField(allow_null=True, required=False)
+    containers = AgentExecutorContainerSerializer(many=True)

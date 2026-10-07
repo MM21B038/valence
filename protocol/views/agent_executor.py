@@ -39,7 +39,7 @@ class AgentExecutorView(GenericAPIView):
         agent_executor.delete()
 
         return Response(
-            status = status.HTTP_401_NO_CONTENT,
+            status=status.HTTP_204_NO_CONTENT,
         )
 
 class AgentExecutorListCreateView(GenericAPIView):
