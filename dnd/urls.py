@@ -7,7 +7,9 @@ from dnd.views.component import ComponentView
 from dnd.views.connection import ConnectionView
 from dnd.views.workspace import WorkspaceView, WorkspaceListCreateView
 from protocol.views.workspace_lifecycle import (
+    ProcessListView,
     WorkspaceRunView,
+    WorkspaceStatusView,
     WorkspaceStopView,
     WorkspaceStopRemoveView,
 )
@@ -103,6 +105,18 @@ urlpatterns = [
         'workspace/<uuid:uuid>/stop-remove/',
         WorkspaceStopRemoveView.as_view(),
         name='workspace-stop-remove',
+    ),
+
+    path(
+        'workspace/<uuid:uuid>/status/',
+        WorkspaceStatusView.as_view(),
+        name='workspace-status',
+    ),
+
+    path(
+        'processes/',
+        ProcessListView.as_view(),
+        name='process-list',
     ),
 
     path(

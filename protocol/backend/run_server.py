@@ -50,8 +50,6 @@ async def _fetch_cards(connected_to: List[str], workspace_id: Optional[str]) -> 
                 "agent_card"
             )
         )
-        # Resolve FKs here — accessing agent.agent_card in the async event
-        # loop raises SynchronousOnlyOperation.
         return [(agent, agent.agent_card) for agent in agents]
 
     peers = await sync_to_async(_load_peers)()

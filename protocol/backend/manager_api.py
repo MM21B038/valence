@@ -108,6 +108,223 @@ def _containers_for_workspace(
     )
 
 
+def _all_labeled_containers(client: docker.DockerClient) -> list:
+    return client.containers.list(
+        all=True,
+        filters={"label": WORKSPACE_LABEL},
+    )
+
+
+def _parse_executor_uuid_from_name(container_name: str, workspace_id: str) -> str | None:
+    prefix = f"{workspace_id}_"
+    if not container_name.startswith(prefix):
+        return None
+    return container_name[len(prefix):] or None
+
+
+def _expected_executors(
+    workspace: Workspace,
+) -> tuple[list[str], dict[str, list[str]]]:
+    """Same resolution as run_workspace: A2A graph (+ fallback) or canvas components."""
+    if workspace.type == WorkspaceTypeChoices.A2A:
+        involved, peer_map = _agent_executor_graph(workspace)
+        executor_ids = sorted(involved)
+        if not executor_ids:
+            executor_ids = _agent_executor_components(workspace)
+            peer_map = {}
+        return executor_ids, peer_map
+
+    return _agent_executor_components(workspace), {}
+
+
+def _aggregate_state(
+    expected_count: int,
+    running_count: int,
+    labeled_count: int,
+) -> str:
+    if labeled_count == 0:
+        return "not_started"
+    if expected_count > 0 and running_count == expected_count:
+        return "running"
+    if running_count > 0:
+        return "partial"
+    return "stopped"
+
+
+def _network_status(client: docker.DockerClient, workspace: Workspace) -> dict[str, Any] | None:
+    if workspace.type != WorkspaceTypeChoices.A2A:
+        return None
+    name = str(workspace.uuid)
+    try:
+        client.networks.get(name)
+        exists = True
+    except NotFound:
+        exists = False
+    return {"name": name, "exists": exists}
+
+
+def _build_workspace_status(
+    workspace: Workspace,
+    containers: list,
+    client: docker.DockerClient,
+) -> dict[str, Any]:
+    workspace_id = str(workspace.uuid)
+    executor_ids, peer_map = _expected_executors(workspace)
+
+    by_executor: dict[str, dict[str, Any]] = {}
+    for container in containers:
+        executor_uuid = _parse_executor_uuid_from_name(container.name, workspace_id)
+        if not executor_uuid:
+            continue
+        info = _container_info(container)
+        by_executor[executor_uuid] = {
+            "container_name": info["container_name"],
+            "container_status": info["status"],
+            "image": info["image"],
+        }
+
+    agents = {
+        str(agent.uuid): agent
+        for agent in AgentExecutorModel.objects.filter(uuid__in=executor_ids)
+    }
+
+    executors: list[dict[str, Any]] = []
+    running_count = 0
+
+    for executor_id in executor_ids:
+        agent = agents.get(executor_id)
+        runtime = by_executor.get(executor_id)
+        if runtime:
+            container_status = runtime["container_status"]
+            if container_status == "running":
+                running_count += 1
+            container_name = runtime["container_name"]
+            image = runtime["image"]
+        else:
+            container_status = "not_found"
+            container_name = _container_name(workspace_id, executor_id)
+            image = None
+
+        executors.append(
+            {
+                "agent_executor_uuid": executor_id,
+                "name": agent.name if agent else None,
+                "host": agent.host if agent else None,
+                "port": agent.port if agent else None,
+                "container_name": container_name,
+                "container_status": container_status,
+                "image": image,
+                "connected_to": peer_map.get(executor_id, []),
+            }
+        )
+
+    return {
+        "workspace_uuid": workspace_id,
+        "workspace_name": workspace.name,
+        "workspace_type": workspace.type,
+        "state": _aggregate_state(
+            expected_count=len(executor_ids),
+            running_count=running_count,
+            labeled_count=len(containers),
+        ),
+        "network": _network_status(client, workspace),
+        "executors": executors,
+        "running_count": running_count,
+        "expected_count": len(executor_ids),
+    }
+
+
+def get_workspace_status(workspace_id: str | UUID) -> dict[str, Any]:
+    workspace_id = str(workspace_id)
+    try:
+        workspace = Workspace.objects.prefetch_related(
+            "components",
+            "connections__source",
+            "connections__target",
+        ).get(uuid=workspace_id)
+    except Workspace.DoesNotExist as exc:
+        raise ContainerManagerError(
+            f"Workspace {workspace_id} not found",
+            status_code=404,
+        ) from exc
+
+    try:
+        client = get_client()
+        containers = _containers_for_workspace(client, workspace_id)
+    except (APIError, docker.errors.DockerException) as exc:
+        explanation = getattr(exc, "explanation", None) or str(exc)
+        raise ContainerManagerError(
+            f"Failed to query Docker: {explanation}",
+            status_code=500,
+        ) from exc
+
+    return _build_workspace_status(workspace, containers, client)
+
+
+def list_workspace_processes() -> dict[str, Any]:
+    workspaces = list(
+        Workspace.objects.filter(
+            type__in=[
+                WorkspaceTypeChoices.AGENT_EXECUTOR,
+                WorkspaceTypeChoices.A2A,
+            ]
+        )
+        .prefetch_related(
+            "components",
+            "connections__source",
+            "connections__target",
+        )
+        .order_by("name")
+    )
+
+    try:
+        client = get_client()
+        all_containers = _all_labeled_containers(client)
+    except (APIError, docker.errors.DockerException) as exc:
+        explanation = getattr(exc, "explanation", None) or str(exc)
+        raise ContainerManagerError(
+            f"Failed to query Docker: {explanation}",
+            status_code=500,
+        ) from exc
+
+    by_workspace: dict[str, list] = defaultdict(list)
+    for container in all_containers:
+        labels = container.labels or {}
+        ws_id = labels.get(WORKSPACE_LABEL)
+        if ws_id:
+            by_workspace[ws_id].append(container)
+
+    processes: list[dict[str, Any]] = []
+    for workspace in workspaces:
+        status = _build_workspace_status(
+            workspace,
+            by_workspace.get(str(workspace.uuid), []),
+            client,
+        )
+        processes.append(
+            {
+                "workspace_uuid": status["workspace_uuid"],
+                "workspace_name": status["workspace_name"],
+                "workspace_type": status["workspace_type"],
+                "state": status["state"],
+                "running_count": status["running_count"],
+                "expected_count": status["expected_count"],
+                "containers": [
+                    {
+                        "agent_executor_uuid": ex["agent_executor_uuid"],
+                        "name": ex["name"],
+                        "container_status": ex["container_status"],
+                        "container_name": ex["container_name"],
+                        "port": ex["port"],
+                    }
+                    for ex in status["executors"]
+                ],
+            }
+        )
+
+    return {"processes": processes}
+
+
 def build_image() -> dict[str, Any]:
     client = get_client()
     image_tag = settings.AGENT_DOCKER_IMAGE
