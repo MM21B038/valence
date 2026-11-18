@@ -1,6 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
-from dnd.agent_executor_template import seed_agent_executor_template
+from dnd.services.agent_executor_template import seed_agent_executor_template
 from dnd.enums import WorkspaceTypeChoices
 from dnd.models import (
     AppTheme,

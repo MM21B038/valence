@@ -4,6 +4,7 @@ WORKDIR /app
 
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
+    UV_HTTP_TIMEOUT=300 \
     PYTHONUNBUFFERED=1
 
 COPY pyproject.toml uv.lock ./

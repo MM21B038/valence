@@ -1,9 +1,6 @@
 from dnd.enums import ComponentTypeChoices
 from dnd.models import Component, Connection, Workspace
 
-# Positions follow the existing agent-executor canvases (demo, demo2):
-# card centered above the executor, interface and skill stacks flanking the card,
-# llm and thread flanking the executor, server stack centered underneath.
 _NODES = (
     (ComponentTypeChoices.AGENT_CARD, 537.0, -11.0),
     (ComponentTypeChoices.AGENT_INTERFACE_STACK, 300.0, 128.0),
@@ -25,7 +22,6 @@ _EDGES = (
 
 
 def seed_agent_executor_template(workspace: Workspace) -> None:
-    """Place an unconfigured agent-executor canvas and wire its default edges."""
     nodes = {}
     for component_type, position_x, position_y in _NODES:
         nodes[component_type] = Component.objects.create(

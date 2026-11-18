@@ -4,9 +4,15 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
 from dnd.models import Workspace
-from protocol.serializers import WorkspaceContainerSerializer
+from protocol.serializers import (
+    ProcessListSerializer,
+    WorkspaceContainerSerializer,
+    WorkspaceStatusSerializer,
+)
 from protocol.backend.manager_api import (
     ContainerManagerError,
+    get_workspace_status,
+    list_workspace_processes,
     run_workspace,
     stop_workspace,
     stop_remove_workspace,
@@ -62,6 +68,38 @@ class WorkspaceStopRemoveView(GenericAPIView):
         get_object_or_404(self.get_queryset(), uuid=uuid)
         try:
             result = stop_remove_workspace(str(uuid))
+        except ContainerManagerError as exc:
+            return _error_response(exc)
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=self.get_serializer(result).data,
+        )
+
+
+class WorkspaceStatusView(GenericAPIView):
+    queryset = Workspace.objects.all()
+    serializer_class = WorkspaceStatusSerializer
+
+    def get(self, request, uuid):
+        get_object_or_404(self.get_queryset(), uuid=uuid)
+        try:
+            result = get_workspace_status(str(uuid))
+        except ContainerManagerError as exc:
+            return _error_response(exc)
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=self.get_serializer(result).data,
+        )
+
+
+class ProcessListView(GenericAPIView):
+    serializer_class = ProcessListSerializer
+
+    def get(self, request):
+        try:
+            result = list_workspace_processes()
         except ContainerManagerError as exc:
             return _error_response(exc)
 

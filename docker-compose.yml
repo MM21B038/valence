@@ -19,6 +19,20 @@ services:
       retries: 10
     restart: unless-stopped
 
+  mongo:
+    image: mongo:7
+    container_name: valence_mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:?Set MONGO_USER in .env}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?Set MONGO_PASSWORD in .env}
+    ports:
+      - "${MONGO_PORT:?Set MONGO_PORT in .env}:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - valence-net
+    restart: unless-stopped
+
   django:
     build: .
     image: valence-agent:latest
@@ -46,12 +60,15 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      mongo:
+        condition: service_started
     networks:
       - valence-net
     restart: unless-stopped
 
 volumes:
   postgres_data:
+  mongo_data:
 
 networks:
   valence-net:
